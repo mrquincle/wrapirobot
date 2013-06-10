@@ -24,6 +24,7 @@ public:
 
 	~IRobotFactory() {
 		if (robot != NULL) delete robot;
+		robot = NULL;
 		delete firmware;
 	}
 
@@ -43,9 +44,12 @@ public:
 			else if (!strcmp(robot_type, "backbone"))
 				firmware->type = RobotBase::KABOT;
 			else {
-				fprintf(stderr, "ERROR! There is no environmental variable \"ROBOT\" defined!\n");
+				fprintf(stderr, "ERROR! The environmental variable \"ROBOT\" is not properly defined!\n");
 				fprintf(stderr, "run export ROBOT=activewheel, export ROBOT=scout, or export ROBOT=backbone\n");
 			}
+		} else {
+			fprintf(stderr, "ERROR! There is no environmental variable \"ROBOT\" defined!\n");
+			fprintf(stderr, "run export ROBOT=activewheel, export ROBOT=scout, or export ROBOT=backbone\n");
 		}
 		if (robot == NULL) {
 			SetRobot(firmware->type);
@@ -56,10 +60,10 @@ public:
 	}
 
 	void SetRobot(RobotBase::RobotType type) {
-		printf("%s\n",__func__);
 		int ret = 0;
 		switch(type) {
 		case RobotBase::KABOT:
+			printf("%s to KABOT\n",__func__);
 			robot = new KaBot();
 			if ((ret = ((KaBot*)robot)->init(RobotFunc::USES_SPI)) != 0) {
 				printf("Error (%d) on init(). Exiting\n", ret);
@@ -68,6 +72,7 @@ public:
 			}
 			break;
 		case RobotBase::SCOUTBOT:
+			printf("%s to SCOUTBOT\n",__func__);
 			robot = new ScoutBot();
 			if ((ret = ((ScoutBot*)robot)->init(RobotFunc::USES_SPI)) != 0) {
 				printf("Error (%d) on init(). Exiting\n", ret);
@@ -76,6 +81,7 @@ public:
 			}
 			break;
 		case RobotBase::ACTIVEWHEEL:
+			printf("%s to ACTIVEWHEEL\n",__func__);
 			robot = new ActiveWheel();
 			if ((ret = ((ActiveWheel*)robot)->init(RobotFunc::USES_SPI)) != 0) {
 				printf("Error (%d) on init(). Exiting\n", ret);

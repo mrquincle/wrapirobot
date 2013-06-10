@@ -18,7 +18,9 @@ class RobotBase {
 public:
 	RobotBase() {}
 
-	virtual ~RobotBase() {}
+	virtual ~RobotBase() {
+		printf("Destruct RobotBase\n");
+	}
 
 	enum RobotType
 	{
@@ -48,62 +50,43 @@ public:
 		return robotbase_instance;
 	}
 
-	/**
-	 * The default robot that will be returned is a KIT robot, so it does not use anymore the MSP
-	 * communication to detect what the type of robot is that it is running. This should be solved.
-	 */
-	//    static RobotType Initialize(std::string controllerName,
-	//            RobotBase::RobotType t = KABOT, bool activate = true) {
-	//    	firmware.type = t;
-	//        return t;
-	//    }
-
 	static void MSPReset() {
-		printf("%s is not implemented", __func__);
+		printf("%s(): is not implemented, not needed\n", __func__);
 	}
 
-	void EnableMotors(bool enable) {
-		printf("%s is not implemented in base class\n", __func__);
-	}
+	virtual void EnableMotors(bool enable) = 0;
 
-	void enableIR(SPIDeviceNum boardNum, bool on) {
-		printf("%s is not implemented in base class\n", __func__);
-	}
+	virtual void enableIR(SPIDeviceNum boardNum, bool on) = 0;
 
-	bool IsBoardRunning(SPIDeviceNum boardNum) {
-		printf("No check anymore if a board is running...\n");
-		return true;
-	}
+	virtual bool IsBoardRunning(SPIDeviceNum boardNum) = 0;
 
-	void enableAmbientLight(SPIDeviceNum boardNum, bool on) {
-		printf("%s is not implemented in base class\n", __func__);
-	}
+	virtual void enableAmbientLight(SPIDeviceNum boardNum, bool on) = 0;
 
 	// Only active wheel and scout have hall sensors, e.g. front.hall.getAllValues();
-	motorData_t GetMotorData(SPIDeviceNum boardNum);
+	virtual motorData_t GetMotorData(SPIDeviceNum boardNum) = 0;
 
-	IRValues GetIRValues(SPIDeviceNum boardNum);
+	virtual IRValues GetIRValues(SPIDeviceNum boardNum) = 0;
 
-	uint16_t GetAmbientLight(SPIDeviceNum boardNum);
+	virtual uint16_t GetAmbientLight(SPIDeviceNum boardNum) = 0;
 
-	rgb_t GetRGB(SPIDeviceNum boardNum);
+	virtual rgb_t GetRGB(SPIDeviceNum boardNum) = 0;
 
-	acceleration_t GetAcceleration(SPIDeviceNum boardNum);
+	virtual acceleration_t GetAcceleration(SPIDeviceNum boardNum) = 0;
 
-	//! Set all LEDS in a certain color
-	bool SetLEDAll(SPIDeviceNum boardNum, uint8_t color);
+	/**
+	 * Set all LEDS in a certain color.
+	 *
+	 * It is inconvenient, but it is defined as a pure virtual, because implementation in the base class itself will be
+	 * quite hard for the different robots having different numbering schemes for the sides in IRobot as well as in the
+	 * HDMR+ middleware.
+	 */
+	virtual void SetLEDAll(SPIDeviceNum boardNum, uint8_t color) = 0;
 
-	void SetIRLED(SPIDeviceNum boardNum, uint8_t LEDMask) {
-		printf("%s is not implemented in base class\n", __func__);
-	}
+	virtual void SetIRLED(SPIDeviceNum boardNum, uint8_t LEDMask) = 0;
 
-	void SetIRPulse(SPIDeviceNum boardNum, uint8_t PulseMask) {
-		printf("%s is not implemented in base class\n", __func__);
-	}
+	virtual void SetIRPulse(SPIDeviceNum boardNum, uint8_t PulseMask) = 0;
 
-	void SetIRMode(SPIDeviceNum boardNum, IRLEDMode mode) {
-		printf("%s is not implemented in base class\n", __func__);
-	}
+	virtual void SetIRMode(SPIDeviceNum boardNum, IRLEDMode mode) = 0;
 };
 
 
